@@ -6,17 +6,39 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import java.math.BigDecimal;
 
-import java.time.LocalDate;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Getter
-@Setter
+@Table(name = "item_pedido")
 public class ItemPedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idPedido;
-    private LocalDate dataPedido;
-    private String status;
+    @Column(name = "id_item")
+    private Long idItem;
 
+    @ManyToOne
+    @JoinColumn(name = "id_pedido", nullable = false) 
+    @NotNull(message = "O item deve pertencer a um pedido.")
+    private Pedido pedido;
 
-}
+    @ManyToOne
+    @JoinColumn(name = "id_produto", nullable = false)
+    @NotNull(message = "O item deve especificar um produto.")
+    private Produto produto;
+
+    @NotNull(message = "A quantidade é obrigatória")
+    @Positive(message = "A quantidade deve ser maior que zero.")
+    private Integer quantidade;
+
+    @NotNull
+    @DecimalMin(value = "0.0", message = "O subtotal não pode ser negativo.")
+    private BigDecimal subtotal;
+
+   }

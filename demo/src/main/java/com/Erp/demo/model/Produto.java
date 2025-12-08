@@ -9,23 +9,31 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
-@Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Table(name = "Produto")
+@Entity
+@Table(name = "produto")
 public class Produto {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_produto;
-	@NotBlank
-	private String nome;
-	private String descricao;
-	@NotBlank
-	private Double preco;
-	@NotBlank
-	private Integer quantidade;
-	private String imagem_url;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idProduto;
+
+    @NotBlank(message = "Nome do produto é obrigatório")
+    private String nome;
+
+    private String descricao;
+
+    @NotNull
+    @Positive(message = "O preço deve ser maior que zero")
+    private BigDecimal preco;
+
+    @NotNull
+    @Min(value = 0, message = "O estoque não pode ser negativo")
+    private Integer estoque;
+
+    private String imagemUrl;
 }

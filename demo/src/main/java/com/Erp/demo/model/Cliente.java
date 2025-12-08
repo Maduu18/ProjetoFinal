@@ -6,25 +6,26 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Entity
 @Data
-@Table(name = "Aluno")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "cliente")
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idAluno;
+    @Column(name = "id_aluno")
+    private Long idAluno;
+
     @NotBlank
-    private String nome;
-    @NotBlank
+    private String nome
+
+    @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter DDD e número")
     private String telefone;
-    @NotBlank
-    private String email;
-    @NotBlank
-    @Size(min = 8, max = 100)
-    private String senha;
-    @NotBlank
-    private String id_pedido;
+
+   @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "idUsuario")
+    @NotNull(message = "O cliente precisa de um usuário vinculado")
+    private Usuario usuario;
 }
