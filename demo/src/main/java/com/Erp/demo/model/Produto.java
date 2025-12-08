@@ -4,35 +4,28 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Table(name = "Produto")
 public class Produto {
 
 	@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    private long idProduto;
-    private String codigoProduto;
-    private String descricao;
-    private String categoria;
-    private double precoVenda;
-    private double custo;
-    private int quantidadeEstoque;
-
-    public Produto() {
-    }
-
-    public Produto(long idProduto, String codigoProduto, String descricao, String categoria, double precoVenda, double custo, int quantidadeEstoque) {
-        this.idProduto = idProduto;
-        this.codigoProduto = codigoProduto;
-        this.descricao = descricao;
-        this.categoria = categoria;
-        this.precoVenda = precoVenda;
-        this.custo = custo;
-        this.quantidadeEstoque = quantidadeEstoque;
-    }
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id_produto;
+	@NotBlank
+	private String nome;
+	private String descricao;
+	@NotBlank
+	private Double preco;
+	@NotBlank
+	private Integer quantidade;
+	private String imagem_url;
 }

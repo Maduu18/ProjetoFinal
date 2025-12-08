@@ -1,22 +1,30 @@
 package com.Erp.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Entity
-@Getter @Setter
-@Table(name = "Cliente")
+@Data
+@Table(name = "Aluno")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCliente;
+    private Integer idAluno;
+    @NotBlank
     private String nome;
-    private String cpfCnpj;
+    @NotBlank
+    private String telefone;
+    @NotBlank
     private String email;
-
-
-
-
-
+    @NotBlank
+    @Size(min = 8, max = 100)
+    private String senha;
+    @NotBlank
+    private String id_pedido;
 }
