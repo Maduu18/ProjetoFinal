@@ -30,16 +30,14 @@ public class Pedido {
     private String codigoRetirada;
 
     @ManyToOne
-    @JoinColumn(name = "id_aluno") // FK para Cliente
+    @JoinColumn(name = "id_aluno")
     @NotNull
     private Cliente cliente;
 
-    // Relacionamento com Itens (Composição)
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     @NotEmpty(message = "O pedido deve ter pelo menos um item")
     private List<ItemPedido> itens;
     
-    // Método auxiliar para adicionar itens e manter a consistência bidirecional
     public void adicionarItem(ItemPedido item) {
         item.setPedido(this);
         this.itens.add(item);
