@@ -19,7 +19,7 @@ public class Cliente {
     private Long idAluno;
 
     @NotBlank
-    private String nome
+    private String nome;
 
     @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter DDD e número")
     private String telefone;

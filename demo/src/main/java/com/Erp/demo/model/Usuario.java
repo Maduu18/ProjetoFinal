@@ -28,4 +28,6 @@ public class Usuario {
     @NotNull(message = "O perfil é obrigatório")
     @Enumerated(EnumType.STRING)
     private Perfil perfil;
+
+    private boolean ativo = true;
 }

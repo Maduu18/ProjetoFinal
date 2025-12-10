@@ -2,7 +2,10 @@ package com.Erp.demo.service;
 import com.Erp.demo.model.Usuario;
 import com.Erp.demo.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -12,8 +15,17 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    // Criar usuário
+    @Transactional
     public Usuario criarUsuario(Usuario usuario) {
+        // A. Verificação de Duplicidade (Melhor lançar exceção customizada do que esperar o erro do banco)
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new EmailDuplicadoException("O e-mail " + usuario.getEmail() + " já está cadastrado.");
+        }
+        // B. Criptografia: Codifica a senha antes de salvar!
+        String senhaCriptografada = PasswordEncoder.encode(usuario.getSenha());
+        usuario.setSenha(senhaCriptografada);
+        // C. Adicionar campo 'ativo' (Se você adicionar o campo no Model)
+        // usuario.setAtivo(true);
         return usuarioRepository.save(usuario);
     }
 
@@ -34,21 +46,47 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com e-mail: " + email));
     }
 
-    // Atualizar usuário
+    @Transactional
     public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado) {
         Usuario usuarioExistente = buscarPorId(id);
+        
+        // Validação: Se o e-mail mudou, verifica duplicidade (Ignorando o próprio usuário)
+        if (!usuarioExistente.getEmail().equals(usuarioAtualizado.getEmail())) {
+            if (usuarioRepository.findByEmail(usuarioAtualizado.getEmail()).isPresent()) {
+                throw new EmailDuplicadoException("O novo e-mail " + usuarioAtualizado.getEmail() + " já está em uso por outro usuário.");
+            }
+            usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+        }
 
-        usuarioExistente.setNome(usuarioAtualizado.getNome());
-        usuarioExistente.setEmail(usuarioAtualizado.getEmail());
-        usuarioExistente.setSenha(usuarioAtualizado.getSenha());
-        usuarioExistente.setPerfil(usuarioAtualizado.getPerfil());
+        // Merge defensivo: Atualiza apenas o que não for nulo/vazio
+        if (usuarioAtualizado.getNome() != null && !usuarioAtualizado.getNome().isBlank()) {
+            usuarioExistente.setNome(usuarioAtualizado.getNome());
+        }
+        if (usuarioAtualizado.getPerfil() != null) {
+            usuarioExistente.setPerfil(usuarioAtualizado.getPerfil());
+        }
 
+        // LÓGICA CRÍTICA DE SENHA:
+        // Só criptografa e atualiza se uma nova senha (em texto puro) foi fornecida.
+        if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isBlank()) {
+            // A senha nova deve ser criptografada!
+            String novaSenhaCriptografada = passwordEncoder.encode(usuarioAtualizado.getSenha());
+            usuarioExistente.setSenha(novaSenhaCriptografada);
+        }
+        // Se a senha for nula/vazia, a senha existente (criptografada) é mantida.
+        
         return usuarioRepository.save(usuarioExistente);
     }
 
-    // Deletar usuário
-    public void deletarUsuario(Long id) {
+    // 3. Deletar usuário (ALTERADO PARA EXCLUSÃO LÓGICA)
+    @Transactional
+    public void desativarUsuario(Long id) {
         Usuario usuario = buscarPorId(id);
-        usuarioRepository.delete(usuario);
+        
+        // Se o usuário tem FKs em Pedido, DELETAR causaria erro.
+        // O Service aplica a regra de negócio: apenas inativar o acesso.git p
+        usuario.setAtivo(false); 
+        
+        usuarioRepository.save(usuario);
     }
 }
