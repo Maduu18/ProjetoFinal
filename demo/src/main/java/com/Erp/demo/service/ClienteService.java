@@ -12,23 +12,19 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
 
-    // Criar cliente
     public Cliente criarCliente(Cliente cliente) {
         return clienteRepository.save(cliente);
     }
 
-    // Listar todos
     public List<Cliente> listarClientes() {
         return clienteRepository.findAll();
     }
 
-    // Buscar por ID
     public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com ID: " + id));
     }
 
-    // Atualizar cliente
     public Cliente atualizarCliente(Long id, Cliente clienteAtualizado) {
         Cliente clienteExistente = buscarPorId(id);
 
@@ -39,7 +35,6 @@ public class ClienteService {
         return clienteRepository.save(clienteExistente);
     }
 
-    // Deletar cliente
     public void deletarCliente(Long id) {
         Cliente cliente = buscarPorId(id);
         clienteRepository.delete(cliente);

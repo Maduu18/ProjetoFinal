@@ -14,17 +14,14 @@ public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
 
-    // Criar produto
     public Produto criarProduto(Produto produto) {
         return produtoRepository.save(produto);
     }
 
-    // Listar todos os produtos
     public List<Produto> listarProdutos() {
         return produtoRepository.findAll();
     }
 
-    // Buscar produto por ID
     public Produto buscarPorId(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com ID: " + id));
@@ -53,7 +50,6 @@ public class ProdutoService {
         return produtoRepository.save(produtoExistente);
     }
 
-    // Deletar produto
     public void desativarProduto(Long id) {
         Produto produto = buscarPorId(id);
         produto.setAtivo(false);

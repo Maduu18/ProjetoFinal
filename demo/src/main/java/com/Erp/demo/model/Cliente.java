@@ -2,7 +2,7 @@ package com.Erp.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,6 @@ public class Cliente {
     @NotBlank
     private String nome;
 
-    @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter DDD e número")
     private String telefone;
 
    @OneToOne(cascade = CascadeType.ALL)

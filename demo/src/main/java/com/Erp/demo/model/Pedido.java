@@ -1,12 +1,20 @@
 package com.Erp.demo.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
-import java.time.LocalDate;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +33,7 @@ public class Pedido {
     private StatusPedido status;
 
     @NotNull(message = "Forma de pagamento obrigatória")
-    private String formaPagamento;
+    private FormaPagamento formaPagamento;
 
     private String codigoRetirada;
 
@@ -34,12 +42,18 @@ public class Pedido {
     @NotNull
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    @NotEmpty(message = "O pedido deve ter pelo menos um item")
-    private List<ItemPedido> itens;
-    
-    public void adicionarItem(ItemPedido item) {
-        item.setPedido(this);
-        this.itens.add(item);
+    public enum StatusPedido {
+    EM_PREPARACAO,
+    PRONTO_PARA_RETIRADA,
+    ENTREGUE,
+    CANCELADO
     }
+
+    public enum FormaPagamento {
+        PIX,
+        CARTAO,
+        DINHEIRO
+    }
+
+
 }

@@ -15,10 +15,8 @@ public class ItemPedidoService {
         this.itemPedidoRepository = itemPedidoRepository;
     }
 
-    // Criar ou atualizar item
     public ItemPedido salvarItem(ItemPedido itemPedido) {
 
-        // Caso deseje garantir o cálculo automático do subtotal (opcional)
         if (itemPedido.getProduto() != null && itemPedido.getQuantidade() != null) {
             BigDecimal preco = itemPedido.getProduto().getPreco();
             if (preco != null) {
@@ -29,17 +27,14 @@ public class ItemPedidoService {
         return itemPedidoRepository.save(itemPedido);
     }
 
-    // Listar todos
     public List<ItemPedido> listarTodos() {
         return itemPedidoRepository.findAll();
     }
 
-    // Buscar por ID
     public Optional<ItemPedido> buscarPorId(Long id) {
         return itemPedidoRepository.findById(id);
     }
 
-    // Deletar item
     public void deletar(Long id) {
         itemPedidoRepository.deleteById(id);
     }
