@@ -1,4 +1,5 @@
 package com.Erp.demo.service;
+import com.Erp.demo.exception.EmailDuplicadoException;
 import com.Erp.demo.model.Usuario;
 import com.Erp.demo.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -40,7 +41,6 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + id));
     }
 
-    // Buscar por e-mail (útil para login, validações, etc)
     public Usuario buscarPorEmail(String email) {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com e-mail: " + email));
@@ -49,8 +49,7 @@ public class UsuarioService {
     @Transactional
     public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado) {
         Usuario usuarioExistente = buscarPorId(id);
-        
-        // Validação: Se o e-mail mudou, verifica duplicidade (Ignorando o próprio usuário)
+
         if (!usuarioExistente.getEmail().equals(usuarioAtualizado.getEmail())) {
             if (usuarioRepository.findByEmail(usuarioAtualizado.getEmail()).isPresent()) {
                 throw new EmailDuplicadoException("O novo e-mail " + usuarioAtualizado.getEmail() + " já está em uso por outro usuário.");
@@ -58,7 +57,6 @@ public class UsuarioService {
             usuarioExistente.setEmail(usuarioAtualizado.getEmail());
         }
 
-        // Merge defensivo: Atualiza apenas o que não for nulo/vazio
         if (usuarioAtualizado.getNome() != null && !usuarioAtualizado.getNome().isBlank()) {
             usuarioExistente.setNome(usuarioAtualizado.getNome());
         }
@@ -70,7 +68,7 @@ public class UsuarioService {
         // Só criptografa e atualiza se uma nova senha (em texto puro) foi fornecida.
         if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isBlank()) {
             // A senha nova deve ser criptografada!
-            String novaSenhaCriptografada = passwordEncoder.encode(usuarioAtualizado.getSenha());
+            String novaSenhaCriptografada = PasswordEncoder.encode(usuarioAtualizado.getSenha());
             usuarioExistente.setSenha(novaSenhaCriptografada);
         }
         // Se a senha for nula/vazia, a senha existente (criptografada) é mantida.

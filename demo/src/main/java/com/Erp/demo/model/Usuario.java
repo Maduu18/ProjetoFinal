@@ -1,8 +1,10 @@
+package com.Erp.demo.model;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Data 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -30,4 +32,9 @@ public class Usuario {
     private Perfil perfil;
 
     private boolean ativo = true;
+
+    public enum Perfil {
+        Cliente,
+        Funcionario
+    }
 }
