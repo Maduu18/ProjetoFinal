@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +33,8 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String email;
     @NotBlank(message = "A senha é obrigatória")
-    @Size(min=6)
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
+    
     private String senha;
     @NotNull(message = "O perfil é obrigatório")
     @Enumerated(EnumType.STRING)
@@ -41,5 +43,6 @@ public class Usuario {
     @Column(unique = true, nullable = true, length = 20)
     private String matricula;
     @NotBlank(message = "O telefone é obrigatório")
+    @Pattern(regexp = "^\\(?(?:\\d{2}\\)?\\s?)?(?:9?\\d{4}\\-?\\d{4})$", message = "Formato de telefone inválido.")
     private String telefone;
 }

@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,7 +32,8 @@ public class Produto {
     @NotBlank(message = "Nome do produto é obrigatório")
     @Column(length = 100, nullable = false)
     private String nome;
-
+    @NotBlank(message = "A descrição do produto é obrigatória")
+    @Column(nullable = false)
     private String descricao;
 
     @NotNull
@@ -40,9 +43,11 @@ public class Produto {
 
     @NotNull
     @Min(value = 0, message = "O estoque não pode ser negativo")
-    private Integer estoque;
-
+    private Integer quantidade;
+    @NotBlank(message = "A URL da imagem é obrigatória")
+    @Column(nullable = false)
     private String imagemUrl;
     private boolean ativo = true;
+    @CreationTimestamp
     private LocalDateTime dataCadastro;
 }

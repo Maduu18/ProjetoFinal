@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class ProdutoService {
     private final ProdutoRepository produtoRepository;
 
     public Produto criarProduto(Produto produto) {
+        produto.setAtivo(true);
         return produtoRepository.save(produto);
     }
 
@@ -40,8 +42,8 @@ public class ProdutoService {
         if (novoProduto.getPreco() != null) {
             produtoExistente.setPreco(novoProduto.getPreco());
         }
-        if (novoProduto.getEstoque() != null) {
-             produtoExistente.setEstoque(novoProduto.getEstoque());
+        if (novoProduto.getQuantidade() != null) {
+             produtoExistente.setQuantidade(novoProduto.getQuantidade());
         }
         if (novoProduto.getImagemUrl() != null) {
             produtoExistente.setImagemUrl(novoProduto.getImagemUrl());
@@ -60,26 +62,26 @@ public class ProdutoService {
     public Produto baixarEstoque(Long idProduto, Integer quantidade) {
         Produto produto = buscarPorId(idProduto);
 
-        if (produto.getEstoque() < quantidade) {
+        if (produto.getQuantidade() < quantidade) {
             throw new EstoqueInsuficienteException("Estoque insuficiente para o produto: " + produto.getNome());
         }
 
-        int novoEstoque = produto.getEstoque() - quantidade;
-        produto.setEstoque(novoEstoque);
+        int novoEstoque = produto.getQuantidade() - quantidade;
+        produto.setQuantidade(novoEstoque);
 
         return produtoRepository.save(produto);
     }
 
     public List<Produto> listarProdutosDisponiveis() {
-        return produtoRepository.findAllByAtivoTrueAndEstoqueGreaterThan(0);
+        return produtoRepository.findAllByAtivoTrueAndQuantidadeGreaterThan(0);
     }
 
     @Transactional
     public Produto reporEstoque(Long idProduto, Integer quantidade) {
         Produto produto = buscarPorId(idProduto);
 
-        int novoEstoque = produto.getEstoque() + quantidade;
-        produto.setEstoque(novoEstoque);
+        int novoEstoque = produto.getQuantidade() + quantidade;
+        produto.setQuantidade(novoEstoque);
 
         return produtoRepository.save(produto);
     }

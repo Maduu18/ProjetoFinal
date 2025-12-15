@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
-    List<Produto> findAllByAtivoTrueAndEstoqueGreaterThan(int estoque);
+    List<Produto> findAllByAtivoTrueAndQuantidadeGreaterThan(int estoque);
     List<Produto> findByNomeContainingIgnoreCase(String nome);
 }

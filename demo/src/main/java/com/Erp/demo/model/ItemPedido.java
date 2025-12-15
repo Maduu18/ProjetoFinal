@@ -1,9 +1,5 @@
 package com.Erp.demo.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -35,8 +31,8 @@ public class ItemPedido {
     @Positive(message = "A quantidade deve ser maior que zero.")
     private Integer quantidade;
 
-    @NotNull
-    @DecimalMin(value = "0.0", message = "O subtotal não pode ser negativo.")
-    private BigDecimal subtotal;
-
+    @NotNull(message = "O preço unitário é obrigatório.")
+    @DecimalMin(value = "0.0", message = "O preço não pode ser negativo.")
+    @Column(precision = 10, scale = 2, nullable = false) 
+    private BigDecimal precoUnitario;
    }

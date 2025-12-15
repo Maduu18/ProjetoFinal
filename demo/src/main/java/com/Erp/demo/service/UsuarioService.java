@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import com.Erp.demo.model.Perfil;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +18,17 @@ public class UsuarioService {
 
     @Transactional
     public Usuario criarUsuario(Usuario usuario) {
+        usuario.setPerfil(Perfil.CLIENTE);
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             throw new EmailDuplicadoException("O e-mail " + usuario.getEmail() + " já está cadastrado.");
         }
+        if (usuario.getMatricula() == null || usuario.getMatricula().isBlank()) {
+            throw new IllegalArgumentException("A matrícula é obrigatória para Clientes (Alunos).");
+        }
+        if (usuarioRepository.findByMatricula(usuario.getMatricula()).isPresent()) {
+            throw new IllegalArgumentException("A matrícula " + usuario.getMatricula() + " já está em uso.");
+        }
+        usuario.setMatricula(usuario.getMatricula().trim());
         usuario.setAtivo(true);
         return usuarioRepository.save(usuario);
     }
@@ -52,12 +61,11 @@ public class UsuarioService {
         if (usuarioAtualizado.getNome() != null && !usuarioAtualizado.getNome().isBlank()) {
             usuarioExistente.setNome(usuarioAtualizado.getNome());
         }
-        if (usuarioAtualizado.getPerfil() != null) {
-            usuarioExistente.setPerfil(usuarioAtualizado.getPerfil());
-        }
-
         if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isBlank()) {
             usuarioExistente.setSenha(usuarioAtualizado.getSenha());
+        }
+        if (usuarioAtualizado.getTelefone() != null && !usuarioAtualizado.getTelefone().isBlank()) {
+            usuarioExistente.setTelefone(usuarioAtualizado.getTelefone());
         }
         return usuarioRepository.save(usuarioExistente);
     }
